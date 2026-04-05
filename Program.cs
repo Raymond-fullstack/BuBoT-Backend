@@ -11,7 +11,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddHttpClient<RasaService>();
 
+builder.Services.AddCors(options => options.AddPolicy("Allow All", p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+
 var app = builder.Build();
+
+app.UseCors("Allow All");
 
 app.MapChatEndpoints();
 
