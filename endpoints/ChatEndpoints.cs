@@ -16,7 +16,7 @@ public static class ChatEndpoints
                    .WithParameterValidation();
 
     //Display Conversation History as a List ordered by latest first              
-    router.MapGet("/conversations", async (AppDbContext _context) =>
+    router.MapGet("conversations/", async (AppDbContext _context) =>
     {
       var conversations = await _context.Conversations
                                   .OrderByDescending(c => c.CreatedAt)
@@ -46,6 +46,20 @@ public static class ChatEndpoints
 
       return Results.Ok(conversation);
     });
+
+    router.MapDelete("conversations/{conversationId}", async (Guid conversationId, AppDbContext _context) =>
+    {
+      var conversation = await _context.Conversations.FindAsync(conversationId);
+
+      if (conversation == null)
+        return Results.NotFound("Conversation not found");
+
+      _context.Conversations.Remove(conversation);
+      await _context.SaveChangesAsync();
+
+      return Results.Ok(conversation);
+    });
+
 
 
     //Get the mesages in a given conversation
